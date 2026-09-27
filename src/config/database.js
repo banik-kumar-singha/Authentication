@@ -8,7 +8,7 @@ const connectDB = async () => {
 //       useUnifiedTopology: true,
 //     });
  const connection = await mongoose.connect(config.mongodb);
-    console.log(connection);
+    // console.log(connection);
     
     console.log("MongoDB connected");
   } catch (error) {
