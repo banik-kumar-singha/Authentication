@@ -8,5 +8,7 @@ const Authrouter = Router();
 
 Authrouter.post("/register", authController.register);
 
+Authrouter.get("/get-me", authController.getMe);
+
 
 export default Authrouter;
