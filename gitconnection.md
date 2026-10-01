@@ -2,3 +2,8 @@ Option 1: Use a Personal Access Token (PAT)Generate a Token on GitHub:Log in to 
 Enter your username: banik-kumar-singhaWhen asked for the Password, paste the Personal Access Token you copied (note: terminal characters won't show while pasting).Option 2: Authenticate using GitHub CLI (Recommended & Easier)Instead of manually generating and managing tokens, you can authenticate via the official GitHub CLI tool:Install GitHub CLI:Bashsudo apt update && sudo apt install gh
 Log In:Bashgh auth login
 Select GitHub.com.Select HTTPS.Choose Yes to authenticate Git credentials.Select Login with a web browser, copy the displayed 8-character code, and authorize it in your browser.Push to GitHub:Bashgit push -u origin main
+
+
+
+
+site:linkedin.com/jobs backend developer

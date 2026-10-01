@@ -31,23 +31,38 @@ const register = async (req, res) => {
         password: hashedPassword
     })
 
-    const token = jwt.sign({
+    const accessToken = jwt.sign({
         id: user._id
     },
         config.jwt_secret,
         {
-            expiresIn: "1d"
+            expiresIn: "15m"
         })
 
+    const refreshToken = jwt.sign(
+        {
+            id: user._id
+        },
+        config.jwt_secret, {
+        expiresIn: "7d"
+    }
+    )
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
 
     res.status(201).json({
         message: "User registered successfully",
-        user : {
+        user: {
             id: user._id,
             userName: user.userName,
             email: user.email
         },
-        token: token
+        accessToken
     })
 }
 
@@ -72,13 +87,13 @@ const getMe = async (req, res) => {
     }
 
     console.log(decode);
-    
+
     const user = await User.findById(decode.id); // when we read this line we got decode.id as undefined because we are not passing the user id as the payload when we create the token using jwt.sign() method. So we need to pass the user id as the payload when we create the token using jwt.sign() method.
 
     if (!user) {
         res.status(404).json({
             message: "User not found",
-            
+
         })
     }
 
@@ -93,4 +108,40 @@ const getMe = async (req, res) => {
 
 }
 
-export { register, getMe };
+const refreshToken = async (req, res) => {
+    const refreshToken = req.cookie.refreshToken
+
+    if (!refreshToken) {
+        return res.status(401).json({
+            message: "Refresh Token not found!"
+        })
+    }
+
+    const decoded = jwt.verify(refreshToken, config.jwt_secret)
+
+    // const user = await User.findById(decoded.id)
+
+
+    const accessToken = jwt.sign({ id: decoded.id },onfig.jwt_secret,{expiresIn: "10min" })
+
+    const newRefreshToken = jwt.sign({
+        id: decoded.id
+    }, config.jwt_secret,
+        {
+            expiresIn: "7d"
+        })
+
+    res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
+
+    res.status(201).json({
+        message: "Access Token generated successfully",
+        accessToken
+    })
+}
+
+export { register, getMe, refreshToken };
